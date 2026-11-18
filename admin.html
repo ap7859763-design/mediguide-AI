@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Dashboard | MediGuide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-body">
+
+<header class="admin-top">
+    <a class="brand" href="/">
+        <span class="brand-mark">✚</span>
+        <span>MediGuide<small>ADMIN CONSOLE</small></span>
+    </a>
+    <div>
+        <a class="soft-button" href="/">View website</a>
+        <a class="soft-button" href="/admin/logout">Log out</a>
+    </div>
+</header>
+
+<main class="admin-main">
+    <div class="admin-heading">
+        <div>
+            <span class="eyebrow teal">CONTENT MANAGEMENT</span>
+            <h1>Admin dashboard</h1>
+            <p>Manage educational disease records and FAQs in PostgreSQL.</p>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <article class="stat-card">
+            <span class="stat-icon mint">♡</span>
+            <div>
+                <small>DISEASE RECORDS</small>
+                <strong>{{ stats.diseases }}</strong>
+            </div>
+        </article>
+        <article class="stat-card">
+            <span class="stat-icon blue">☷</span>
+            <div>
+                <small>FAQ RECORDS</small>
+                <strong>{{ stats.faqs }}</strong>
+            </div>
+        </article>
+    </div>
+
+    <div class="admin-tabs">
+        <button class="admin-tab active" data-panel="diseasePanel">Diseases</button>
+        <button class="admin-tab" data-panel="faqPanel">FAQs</button>
+    </div>
+
+    <section id="diseasePanel" class="admin-panel active">
+        <div class="admin-section-head">
+            <h2>Disease records</h2>
+            <button class="primary-button" id="newDisease">+ Add disease</button>
+        </div>
+        <div id="adminDiseaseList" class="admin-record-list">
+            {% for d in diseases %}
+            <article class="admin-record">
+                <div>
+                    <b>{{ d.name }}</b>
+                    <small>{{ d.category or 'Uncategorized' }}</small>
+                </div>
+                <div class="record-actions">
+                    <button class="soft-button edit-disease"
+                            data-record='{{ d|tojson|forceescape }}'>Edit</button>
+                    <button class="danger-button delete-disease"
+                            data-id="{{ d.id }}">Delete</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="faqPanel" class="admin-panel">
+        <div class="admin-section-head">
+            <h2>FAQ records</h2>
+            <button class="primary-button" id="newFaq">+ Add FAQ</button>
+        </div>
+        <div id="adminFaqList" class="admin-record-list">
+            {% for f in faqs %}
+            <article class="admin-record">
+                <div>
+                    <b>{{ f.question }}</b>
+                    <small>{{ f.category or 'General' }}</small>
+                </div>
+                <div class="record-actions">
+                    <button class="soft-button edit-faq"
+                            data-record='{{ f|tojson|forceescape }}'>Edit</button>
+                    <button class="danger-button delete-faq"
+                            data-id="{{ f.id }}">Delete</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+<div id="editorModal" class="modal hidden">
+    <div class="modal-card">
+        <div class="modal-head">
+            <h2 id="editorTitle">Add record</h2>
+            <button id="closeModal" class="icon-button" type="button">×</button>
+        </div>
+        <form id="editorForm">
+            <div id="editorFields" class="form-grid"></div>
+            <div class="modal-actions">
+                <button type="button" id="cancelModal" class="soft-button">Cancel</button>
+                <button class="primary-button" type="submit">Save record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>

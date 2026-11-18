@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediGuide AI | Health Information</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/">
+      <span class="brand-mark">✚</span>
+      <span>MediGuide<small>AI HEALTH ASSISTANT</small></span>
+    </a>
+
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-link active" data-tab="overviewSection"><span>▦</span> Overview</button>
+    <button class="nav-link" data-tab="chatSection"><span>✧</span> AI Assistant</button>
+    <button class="nav-link" data-tab="diseaseSection"><span>♡</span> Disease Library</button>
+    <button class="nav-link" data-tab="faqSection"><span>☷</span> FAQ Center</button>
+
+    <div class="sidebar-bottom">
+      <div class="safety-mini">
+        <span>●</span>
+        <div><b>Educational support</b><small>Not a medical diagnosis</small></div>
+      </div>
+      <button id="themeToggle" class="nav-link"><span>◐</span> Toggle appearance</button>
+      <a class="nav-link admin-link" href="/admin/login"><span>⚙</span> Admin panel</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">YOUR PERSONAL HEALTH KNOWLEDGE SPACE</span>
+        <h1 id="pageTitle">Overview</h1>
+      </div>
+      <div class="top-actions">
+        <span class="status-pill"><i></i> AI workspace</span>
+        <span class="avatar">MG</span>
+      </div>
+    </header>
+
+    <div class="disclaimer-banner">
+      <span class="banner-icon">!</span>
+      <div>
+        <b>Medical information disclaimer</b>
+        <p>MediGuide provides general educational information only. It cannot diagnose conditions or prescribe treatment. For emergencies in India, call 112.</p>
+      </div>
+    </div>
+
+    <section id="overviewSection" class="page-section active">
+      <div class="welcome-row">
+        <div>
+          <span class="eyebrow teal">WELCOME TO MEDIGUIDE</span>
+          <h2>Health knowledge, made simpler.</h2>
+          <p>Explore trusted educational topics and ask general health questions.</p>
+        </div>
+        <div class="welcome-art">✚</div>
+      </div>
+
+      <div class="stat-grid">
+        <article class="stat-card">
+          <span class="stat-icon mint">♡</span>
+          <div>
+            <small>DISEASE TOPICS</small>
+            <strong>{{ stats.diseases }}</strong>
+            <p>In your local library</p>
+          </div>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon blue">☷</span>
+          <div>
+            <small>FAQ ANSWERS</small>
+            <strong>{{ stats.faqs }}</strong>
+            <p>Quick health information</p>
+          </div>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon violet">✧</span>
+          <div>
+            <small>AI ASSISTANT</small>
+            <strong>Ready</strong>
+            <p>Powered by local Ollama</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-heading">
+        <div><span class="eyebrow">GET STARTED</span><h2>Explore MediGuide</h2></div>
+      </div>
+
+      <div class="feature-grid">
+        <button class="feature-card" data-tab="chatSection">
+          <span class="feature-icon mint">✧</span>
+          <b>Ask MediGuide AI</b>
+          <p>Ask general questions about health, conditions and prevention.</p>
+          <span class="feature-arrow">Open assistant →</span>
+        </button>
+        <button class="feature-card" data-tab="diseaseSection">
+          <span class="feature-icon blue">♡</span>
+          <b>Browse disease library</b>
+          <p>Search educational summaries by condition or category.</p>
+          <span class="feature-arrow">Explore library →</span>
+        </button>
+        <button class="feature-card" data-tab="faqSection">
+          <span class="feature-icon violet">☷</span>
+          <b>Read FAQs</b>
+          <p>Find answers to common health education questions.</p>
+          <span class="feature-arrow">View FAQs →</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="chatSection" class="page-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow teal">MEDIGUIDE ASSISTANT</span>
+          <h2>Ask a health question</h2>
+          <p>Responses are educational and are not a substitute for professional care.</p>
+        </div>
+      </div>
+
+      <div class="chat-toolbar">
+        <label>Response language
+          <select id="language">
+            <option value="en-IN">English</option>
+            <option value="hi-IN">Hindi</option>
+          </select>
+        </label>
+        <label class="check-label">
+          <input type="checkbox" id="autoSpeak"> Read answers aloud
+        </label>
+      </div>
+
+      <div id="chatBox" class="chat-box">
+        <div class="bot-message">
+          <b>MediGuide AI</b>
+          <p>Hello! I can explain general health topics, disease information and prevention. What would you like to learn about?</p>
+        </div>
+      </div>
+
+      <form id="chatForm" class="chat-form">
+        <input id="userInput" maxlength="1200" placeholder="Type your question here..." required>
+        <button id="sendBtn" type="submit">Send <span>➤</span></button>
+      </form>
+
+      <div class="voice-row">
+        <button id="micBtn" class="soft-button" type="button">🎙 Speak question</button>
+        <button id="speakLast" class="soft-button" type="button">🔊 Read last answer</button>
+        <button id="stopVoice" class="soft-button" type="button">■ Stop voice</button>
+        <span id="voiceStatus">Ready</span>
+      </div>
+    </section>
+
+    <section id="diseaseSection" class="page-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow teal">LEARN & EXPLORE</span>
+          <h2>Disease library</h2>
+          <p>Search the educational records stored in your PostgreSQL database.</p>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <span>⌕</span>
+        <input id="searchDisease" placeholder="Search by disease name, category or keyword...">
+      </div>
+      <div id="diseaseList" class="disease-grid">
+        <p class="muted">Loading disease records...</p>
+      </div>
+      <p class="small-disclaimer">This starter library is not a complete medical encyclopedia. Information should be checked against reliable medical sources.</p>
+    </section>
+
+    <section id="faqSection" class="page-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow teal">QUICK ANSWERS</span>
+          <h2>Frequently asked questions</h2>
+          <p>Common educational questions stored in PostgreSQL.</p>
+        </div>
+      </div>
+      <div id="faqList" class="faq-list">
+        <p class="muted">Loading FAQs...</p>
+      </div>
+    </section>
+
+    <footer>
+      MediGuide AI <span>•</span> BCA 5th Semester Internship Project <span>•</span> Educational use only
+    </footer>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
